@@ -1,5 +1,6 @@
 package br.com.testes.cadcli.controller;
 
+import br.com.testes.cadcli.dto.ClienteDto;
 import br.com.testes.cadcli.model.Cliente;
 import br.com.testes.cadcli.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,12 @@ public class ClienteController {
     }
 
     @PostMapping("/salva")
-    public String salva(@ModelAttribute @Valid Cliente cliente, BindingResult errors) {
+    public String salva(@ModelAttribute @Valid ClienteDto clienteDto, BindingResult errors) {
+
+        Cliente cliente = new Cliente();
+        cliente.setNome(clienteDto.getNome());
+        cliente.setCpf(clienteDto.getCpf());
+
         if (errors.hasErrors()) {
             return "cliente-edit";
         }
