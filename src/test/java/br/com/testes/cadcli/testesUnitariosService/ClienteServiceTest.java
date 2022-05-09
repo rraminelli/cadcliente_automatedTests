@@ -3,6 +3,7 @@ package br.com.testes.cadcli.testesUnitariosService;
 import br.com.testes.cadcli.model.Cliente;
 import br.com.testes.cadcli.repository.ClienteRepository;
 import br.com.testes.cadcli.service.ClienteService;
+import br.com.testes.cadcli.service.EnvioEmailService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +22,8 @@ public class ClienteServiceTest {
     private ClienteService clienteService;
     @Mock
     private ClienteRepository clienteRepository;
+    @Mock
+    private EnvioEmailService envioEmailService;
 
     @Test
     void salvarClienteTeste() {
@@ -50,9 +53,9 @@ public class ClienteServiceTest {
     void listaClienteTeste() {
 
         List<Cliente> clientesList = new ArrayList<>();
-        clientesList.add(new Cliente(1L, "Cliente 1", "123"));
-        clientesList.add(new Cliente(2L, "Cliente 2", "456"));
-        clientesList.add(new Cliente(3L, "Cliente 3", "54656"));
+        clientesList.add(new Cliente(1L, "Cliente 1", "123", "cliente1@test.com"));
+        clientesList.add(new Cliente(2L, "Cliente 2", "456", "cliente2@test.com"));
+        clientesList.add(new Cliente(3L, "Cliente 3", "54656", "cliente3@test.com"));
 
         Mockito.when(clienteRepository.findAll())
                 .thenReturn(clientesList);

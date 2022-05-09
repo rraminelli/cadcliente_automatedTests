@@ -28,4 +28,6 @@ public class Cliente {
     @NotEmpty(message = "CPF é obrigatorio")
     private String cpf;
 
+    private String email;
+
 }
