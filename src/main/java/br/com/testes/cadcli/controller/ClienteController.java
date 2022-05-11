@@ -36,14 +36,16 @@ public class ClienteController {
     @PostMapping("/salva")
     public String salva(@ModelAttribute @Valid ClienteDto clienteDto, BindingResult errors) {
 
-        Cliente cliente = new Cliente();
-        cliente.setNome(clienteDto.getNome());
-        cliente.setCpf(clienteDto.getCpf());
-
         if (errors.hasErrors()) {
             return "cliente-edit";
         }
-        clienteService.salva(cliente);
+
+        Cliente cliente = new Cliente();
+        cliente.setNome(clienteDto.getNome());
+        cliente.setCpf(clienteDto.getCpf());
+        cliente.setEmail(clienteDto.getEmail());
+
+        cliente = clienteService.salva(cliente);
         return "redirect:/cliente";
     }
 

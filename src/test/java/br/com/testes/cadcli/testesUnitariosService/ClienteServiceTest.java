@@ -22,6 +22,7 @@ public class ClienteServiceTest {
     private ClienteService clienteService;
     @Mock
     private ClienteRepository clienteRepository;
+
     @Mock
     private EnvioEmailService envioEmailService;
 
@@ -30,16 +31,25 @@ public class ClienteServiceTest {
         Cliente clienteSalvar = new Cliente();
         clienteSalvar.setNome("Teste");
         clienteSalvar.setCpf("1234");
+        clienteSalvar.setEmail("teste@test.com");
 
         Cliente clienteRetorno = new Cliente();
         clienteRetorno.setId(1234L);
         clienteRetorno.setNome("Teste");
         clienteRetorno.setCpf("1234");
+        clienteRetorno.setEmail("teste@test.com");
 
         Mockito.when(clienteRepository.save(clienteSalvar))
                 .thenReturn(clienteRetorno);
 
         clienteRetorno = clienteService.salva(clienteSalvar);
+
+        Mockito.verify(envioEmailService)
+                        .enviaEmail(
+                                clienteSalvar.getEmail(),
+                                "Bem vindo",
+                                "Bem vindo ao sistema"
+                        );
 
         Assertions.assertNotNull(clienteRetorno);
         Assertions.assertNotNull(clienteRetorno.getId());
