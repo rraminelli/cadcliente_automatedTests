@@ -12,10 +12,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
-import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ClienteRestControllerIntegTest {
@@ -44,9 +40,9 @@ public class ClienteRestControllerIntegTest {
 
         ResponseEntity response = this.restTemplate
                 .withBasicAuth(username, password)
-                .exchange("/cliente/salva", HttpMethod.POST, httpEntity, Void.class);
+                .exchange("/cliente-rest/salva", HttpMethod.POST, httpEntity, Void.class);
 
-        Assertions.assertEquals(302, response.getStatusCodeValue());
+        Assertions.assertEquals(200, response.getStatusCodeValue());
 
     }
 
