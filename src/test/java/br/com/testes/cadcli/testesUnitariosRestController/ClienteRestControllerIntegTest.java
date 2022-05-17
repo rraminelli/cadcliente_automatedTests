@@ -1,10 +1,10 @@
-package br.com.testes.cadcli.testesUnitariosController;
+package br.com.testes.cadcli.testesUnitariosRestController;
 
-import br.com.testes.cadcli.controller.ClienteController;
+import br.com.testes.cadcli.controller.ClienteRestController;
 import br.com.testes.cadcli.dto.ClienteDto;
 import br.com.testes.cadcli.model.Cliente;
 import br.com.testes.cadcli.service.ClienteService;
-import br.com.testes.cadcli.service.EnvioEmailService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,16 +25,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(value = ClienteController.class)
-class ClienteControllerTest {
+@WebMvcTest(value = ClienteRestController.class)
+public class ClienteRestControllerIntegTest {
 
     @MockBean
     private ClienteService clienteService;
-
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     @WithMockUser
@@ -47,12 +51,15 @@ class ClienteControllerTest {
         Mockito.when(clienteService.lista())
                 .thenReturn(clientesList);
 
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/cliente"))
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .get("/cliente-rest")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.model().attributeExists("clientes"))
-                .andExpect(MockMvcResultMatchers.view().name("cliente-list"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("<td>Rodrigo</td>")));
+                .andExpect(jsonPath("$", Matchers.hasSize(clientesList.size())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id", Matchers.is(clientesList.get(0).getId()), Long.class));
     }
 
     @Test
@@ -72,14 +79,16 @@ class ClienteControllerTest {
         Mockito.when(clienteService.salva(cliente))
                 .thenReturn(cliente);
 
-        this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/cliente/salva")
-                        .flashAttr("clienteDto", clienteDto)
-        )
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .post("/cliente-rest/salva")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(clienteDto))
+                )
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.view().name("redirect:/cliente"));
+                .andExpect(MockMvcResultMatchers.status().isOk());
 
+        Assertions.assertEquals(clienteDto.getNome(), cliente.getNome());
         Assertions.assertEquals(clienteDto.getEmail(), cliente.getEmail());
     }
 
