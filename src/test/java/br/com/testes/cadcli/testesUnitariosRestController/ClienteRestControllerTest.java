@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = ClienteRestController.class)
-public class ClienteRestControllerIntegTest {
+public class ClienteRestControllerTest {
 
     @MockBean
     private ClienteService clienteService;
